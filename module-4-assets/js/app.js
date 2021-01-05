@@ -4,11 +4,22 @@ const formEl = document.querySelector('#task-form');
 
 
 
-const createTaskHandler = (e) => {
+const taskFormHandler = (e) => {
     e.preventDefault();
     const taskNameInput = document.querySelector('input[name="task-name"]').value;
     const taskTypeInput = document.querySelector('select[name="task-type"]').value;
 
+    // package up data as an object
+    const taskDataObj = {
+        name: taskNameInput,
+        type: taskTypeInput
+    };
+    // send it as an argument to createTaskEl
+    createTaskEl(taskDataObj);
+
+}
+
+const createTaskEl = (taskDataObj) => {
     // create a list item
     const listItemEl = document.createElement('li');
     listItemEl.className = 'task-item';
@@ -18,14 +29,14 @@ const createTaskHandler = (e) => {
     taskInfoEl.className = 'task-info';
     // add HTML content to div
     taskInfoEl.innerHTML = `
-        <h3 class='task-name'>${taskNameInput}</h3>
-        <span class='task-type'>${taskNameInput}</span>
+        <h3 class='task-name'>${taskDataObj.name}</h3>
+        <span class='task-type'>${taskDataObj.name}</span>
     `;
     // add div to li
     listItemEl.appendChild(taskInfoEl);
     // add entire list item to list
     taskToDoEl.appendChild(listItemEl);
-
 }
 
-formEl.addEventListener('submit', createTaskHandler);
+
+formEl.addEventListener('submit', taskFormHandler);
