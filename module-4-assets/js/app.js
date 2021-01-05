@@ -17,6 +17,13 @@ const taskFormHandler = (e) => {
     // send it as an argument to createTaskEl
     createTaskEl(taskDataObj);
 
+    // check if input values are empty strings
+    if (!taskNameInput || !taskTypeInput) {
+        alert('You need to fill out the task form!');
+        return false;
+    }
+    // clear input
+    formEl.reset();
 }
 
 const createTaskEl = (taskDataObj) => {
