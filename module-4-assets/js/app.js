@@ -43,7 +43,7 @@ const editTask = (taskId) => {
     const taskType = taskSelected.querySelector('span.task-type').textContent;
     document.querySelector("input[name='task-name']").value = taskName;
     document.querySelector("select[name='task-type']").value = taskType;
-    document.querySelector("#save-task").textContent = 'Save Task';
+    formEl.querySelector("#save-task").textContent = 'Save Task';
     formEl.setAttribute('data-task-id', taskId);
 }
 
@@ -170,19 +170,13 @@ const taskStatusChangeHandler = (event) => {
 
 // drag task
 const dragTaskHandler = (event) => {
-    const taskId = event.target.getAttribute('data-task-id');
-    const getId = event.dataTransfer.setData('text/plain', taskId);
-    console.log("getId:", getId, typeof getId);
+    if (event.target.matches('li.task-item')) {
+        const taskId = event.target.getAttribute('data-task-id');
+        event.dataTransfer.setData('text/plain', taskId);
+    }
+
 }
 
-// drag zone 
-const dropZoneDragHandler = (event) => {
-    const taskListEl = event.target.closest(".task-list");
-    if (taskListEl) {
-        event.preventDefault();
-        console.dir(taskListEl);
-    }
-}
 
 // drop zone
 const dropTaskHandler = (event) => {
@@ -204,8 +198,28 @@ const dropTaskHandler = (event) => {
     dropZoneEl.appendChild(draggableElement);
 }
 
+
+// drag zone 
+const dropZoneDragHandler = (event) => {
+    const taskListEl = event.target.closest(".task-list");
+
+    if (taskListEl) {
+        event.preventDefault();
+        taskListEl.setAttribute("style", "background: rgba(68, 233, 255, 0.7); border-style: dashed;");
+    }
+}
+
+// drage and leave
+const dragLeaveHandler = function (event) {
+    const taskListEl = event.target.closest(".task-list");
+    if (taskListEl) {
+        event.target.closest(".task-list").removeAttribute("style");
+    }
+}
+
 formEl.addEventListener('submit', taskFormHandler);
 pageContentEl.addEventListener('change', taskStatusChangeHandler);
 pageContentEl.addEventListener('dragstart', dragTaskHandler);
 pageContentEl.addEventListener('dragover', dropZoneDragHandler);
 pageContentEl.addEventListener("drop", dropTaskHandler);
+pageContentEl.addEventListener("dragleave", dragLeaveHandler);
