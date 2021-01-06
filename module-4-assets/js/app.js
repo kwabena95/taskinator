@@ -94,6 +94,8 @@ const createTaskEl = (taskDataObj) => {
     listItemEl.className = 'task-item';
     // add task id as a  custom attribute
     listItemEl.setAttribute('data-task-id', taskIdCounter);
+    // set draggable atrribute ti list
+    listItemEl.setAttribute('draggable', 'true');
     // create a div to hold task info and add to list item
     const taskInfoEl = document.createElement('div');
     // give it a classname
@@ -166,5 +168,44 @@ const taskStatusChangeHandler = (event) => {
     }
 };
 
+// drag task
+const dragTaskHandler = (event) => {
+    const taskId = event.target.getAttribute('data-task-id');
+    const getId = event.dataTransfer.setData('text/plain', taskId);
+    console.log("getId:", getId, typeof getId);
+}
+
+// drag zone 
+const dropZoneDragHandler = (event) => {
+    const taskListEl = event.target.closest(".task-list");
+    if (taskListEl) {
+        event.preventDefault();
+        console.dir(taskListEl);
+    }
+}
+
+// drop zone
+const dropTaskHandler = (event) => {
+    const id = event.dataTransfer.getData("text/plain");
+    const draggableElement = document.querySelector("[data-task-id='" + id + "']");
+    const dropZoneEl = event.target.closest(".task-list");
+    const statusType = dropZoneEl.id;
+    // set status of task based on dropZone id
+    const statusSelectEl = draggableElement.querySelector("select[name='status-change']");
+    if (statusType === "tasks-to-do") {
+        statusSelectEl.selectedIndex = 0;
+    }
+    else if (statusType === "tasks-in-progress") {
+        statusSelectEl.selectedIndex = 1;
+    }
+    else if (statusType === "tasks-completed") {
+        statusSelectEl.selectedIndex = 2;
+    }
+    dropZoneEl.appendChild(draggableElement);
+}
+
 formEl.addEventListener('submit', taskFormHandler);
 pageContentEl.addEventListener('change', taskStatusChangeHandler);
+pageContentEl.addEventListener('dragstart', dragTaskHandler);
+pageContentEl.addEventListener('dragover', dropZoneDragHandler);
+pageContentEl.addEventListener("drop", dropTaskHandler);
